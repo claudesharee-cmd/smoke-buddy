@@ -2,6 +2,9 @@
 
 > Peer pressure, now with push notifications.
 
+**📲 Install it now (iPhone & Android):** https://claudesharee-cmd.github.io/smoke-buddy/
+Open the link → browser menu → **Add to Home Screen**. That's it.
+
 A fun, sarcastic squad app for coordinating smoke breaks with your work friends.
 One tap summons the squad; everyone RSVPs ("OMW 🏃" / "Gimme 5 🐌" / "Can't 💼"),
 and when quorum is reached (e.g. 2 of 5 are in) everybody gets pinged to move.
