@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#0c0d12" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Smoke Buddy" />
+  <title>Smoke Buddy</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <canvas id="smoke-canvas"></canvas>
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- ══════════ ONBOARDING ══════════ -->
+  <section id="screen-onboarding" class="screen">
+    <div class="onboard-wrap">
+      <div class="logo-block">
+        <div class="logo-cig">
+          <div class="cig-body"></div>
+          <div class="cig-ember"></div>
+          <div class="cig-smoke"><span></span><span></span><span></span></div>
+        </div>
+        <h1>SMOKE&nbsp;BUDDY</h1>
+        <p class="tagline">Peer pressure, now with push notifications.</p>
+      </div>
+
+      <div class="onboard-card">
+        <label>Your name (or what HR calls you)</label>
+        <input id="ob-name" type="text" maxlength="14" placeholder="e.g. Nicotine Nick" autocomplete="off" />
+
+        <label>Pick your spirit animal</label>
+        <div id="ob-emoji" class="emoji-grid"></div>
+
+        <label>Squad code <span class="hint">— same code = same squad. Share it.</span></label>
+        <input id="ob-code" type="text" maxlength="20" placeholder="e.g. lungs-of-steel" autocomplete="off" />
+
+        <label>Squad size <span class="hint">— how many degenerates in total?</span></label>
+        <div class="stepper">
+          <button class="step-btn" data-step="-1" data-target="ob-size">−</button>
+          <span id="ob-size" class="step-val" data-min="2" data-max="12">5</span>
+          <button class="step-btn" data-step="1" data-target="ob-size">+</button>
+        </div>
+
+        <label>Quorum <span class="hint">— ping everyone when this many are in</span></label>
+        <div class="stepper">
+          <button class="step-btn" data-step="-1" data-target="ob-quorum">−</button>
+          <span id="ob-quorum" class="step-val" data-min="2" data-max="12">2</span>
+          <button class="step-btn" data-step="1" data-target="ob-quorum">+</button>
+        </div>
+
+        <button id="ob-go" class="btn-primary">LIGHT IT UP 🔥</button>
+        <p class="legal">No accounts. No tracking. Just bad decisions, synchronized.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ MAIN APP ══════════ -->
+  <main id="app" class="hidden">
+
+    <!-- HOME -->
+    <section id="tab-home" class="tab active">
+      <header class="app-header">
+        <div>
+          <h2 id="hdr-squad">SMOKE BUDDY</h2>
+          <p id="hdr-tagline" class="sub"></p>
+        </div>
+        <div id="conn-dot" class="conn" title="connection">●</div>
+      </header>
+
+      <!-- idle state -->
+      <div id="state-idle" class="home-state">
+        <p id="idle-quip" class="quip"></p>
+        <button id="btn-summon" class="ignite">
+          <span class="ignite-ring"></span>
+          <span class="ignite-core">
+            <span class="ignite-emoji">🚬</span>
+            <span class="ignite-label">SUMMON<br/>THE SQUAD</span>
+          </span>
+        </button>
+        <p class="idle-hint">One tap. Everyone gets judged equally.</p>
+        <div id="last-session" class="last-session"></div>
+      </div>
+
+      <!-- active call state -->
+      <div id="state-active" class="home-state hidden">
+        <div class="call-card">
+          <div class="call-top">
+            <span id="call-caller" class="call-caller"></span>
+            <span id="call-timer" class="call-timer">15:00</span>
+          </div>
+          <p id="call-msg" class="call-msg"></p>
+
+          <div class="quorum-bar">
+            <div id="quorum-fill" class="quorum-fill"></div>
+            <span id="quorum-text" class="quorum-text">0 / 2</span>
+          </div>
+          <p id="quorum-quip" class="quorum-quip"></p>
+
+          <div id="roster" class="roster"></div>
+
+          <div id="rsvp-row" class="rsvp-row">
+            <button id="btn-in" class="btn-rsvp in">🏃 OMW</button>
+            <button id="btn-late" class="btn-rsvp late">🐌 Gimme 5</button>
+            <button id="btn-out" class="btn-rsvp out">💼 Can't</button>
+          </div>
+          <button id="btn-cancel" class="btn-ghost hidden">😶‍🌫️ Abort mission (you started this)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section id="tab-stats" class="tab">
+      <header class="app-header"><h2>DAMAGE REPORT</h2></header>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span id="st-today" class="stat-big">0</span>
+          <span class="stat-label">breaks today</span>
+          <span id="st-today-quip" class="stat-quip"></span>
+        </div>
+        <div class="stat-card">
+          <span id="st-week" class="stat-big">0</span>
+          <span class="stat-label">this week</span>
+        </div>
+        <div class="stat-card">
+          <span id="st-money" class="stat-big">₹0</span>
+          <span class="stat-label">burned this week</span>
+        </div>
+        <div class="stat-card">
+          <span id="st-lungs" class="stat-big">🫁</span>
+          <span class="stat-label">lung status</span>
+          <span id="st-lungs-quip" class="stat-quip"></span>
+        </div>
+      </div>
+      <h3 class="section-title">🏆 Chimney of the Week</h3>
+      <div id="leaderboard" class="leaderboard"></div>
+      <p class="legal">Leaderboard counts squad sessions seen by this phone in the last 7 days.</p>
+    </section>
+
+    <!-- SETTINGS -->
+    <section id="tab-settings" class="tab">
+      <header class="app-header"><h2>MISSION CONTROL</h2></header>
+      <div class="settings-card">
+        <label>Name</label>
+        <input id="set-name" type="text" maxlength="14" />
+        <label>Spirit animal</label>
+        <div id="set-emoji" class="emoji-grid"></div>
+        <label>Squad code</label>
+        <input id="set-code" type="text" maxlength="20" />
+        <label>Squad size</label>
+        <div class="stepper">
+          <button class="step-btn" data-step="-1" data-target="set-size">−</button>
+          <span id="set-size" class="step-val" data-min="2" data-max="12">5</span>
+          <button class="step-btn" data-step="1" data-target="set-size">+</button>
+        </div>
+        <label>Quorum (ping at N in)</label>
+        <div class="stepper">
+          <button class="step-btn" data-step="-1" data-target="set-quorum">−</button>
+          <span id="set-quorum" class="step-val" data-min="2" data-max="12">2</span>
+          <button class="step-btn" data-step="1" data-target="set-quorum">+</button>
+        </div>
+        <label>Usual spot</label>
+        <input id="set-spot" type="text" maxlength="30" placeholder="e.g. parking lot, level -1" />
+        <label>Cost per smoke (₹)</label>
+        <input id="set-price" type="number" min="0" max="999" />
+        <button id="set-save" class="btn-primary">SAVE</button>
+        <p id="set-saved" class="saved-msg hidden">Saved. Your lungs remain unimpressed.</p>
+      </div>
+      <div class="settings-card">
+        <h3 class="section-title" style="margin-top:0">📟 Nerd corner</h3>
+        <p class="legal" style="text-align:left">
+          Smoke Buddy syncs over a public <b>ntfy.sh</b> topic derived from your squad code — no accounts, no server.
+          Anyone who knows the code can join, so pick something only your squad would guess.<br/><br/>
+          Want pings even when the app is fully closed? Install the free <b>ntfy</b> app and subscribe to the topic shown below.
+        </p>
+        <code id="set-topic" class="topic-code"></code>
+      </div>
+    </section>
+
+    <!-- TAB BAR -->
+    <nav class="tabbar">
+      <button class="tabbtn active" data-tab="tab-home"><span>🚬</span>Squad</button>
+      <button class="tabbtn" data-tab="tab-stats"><span>📉</span>Damage</button>
+      <button class="tabbtn" data-tab="tab-settings"><span>🎛️</span>Control</button>
+    </nav>
+  </main>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

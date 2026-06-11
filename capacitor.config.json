@@ -1,0 +1,13 @@
+{
+  "appId": "in.smokebuddy.app",
+  "appName": "Smoke Buddy",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "LocalNotifications": {
+      "iconColor": "#ff7a18"
+    }
+  }
+}

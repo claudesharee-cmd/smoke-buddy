@@ -1,0 +1,10 @@
+node_modules/
+android/.gradle/
+android/app/build/
+android/build/
+android/capacitor-cordova-android-plugins/build/
+android/local.properties
+release.keystore
+SmokeBuddy.apk
+assets/*.png
+.DS_Store
