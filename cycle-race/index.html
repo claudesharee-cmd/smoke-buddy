@@ -108,12 +108,34 @@
   /* winner */
   #winScreen{z-index:5}
   .podium{display:flex; flex-direction:column; align-items:center; gap:4px}
-  .akhil{font-size:64px; animation:bob 1.6s ease-in-out infinite}
-  @keyframes bob{0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)}}
-  .gift{font-size:54px; animation:fly 1.4s ease forwards}
-  @keyframes fly{0%{transform:translateX(-160px) scale(.4); opacity:0}
-    60%{transform:translateX(20px) scale(1.15); opacity:1}
-    100%{transform:translateX(0) scale(1)}}
+  /* Akhilesh photo + funny entrance/wobble */
+  .akhil-stage{position:relative; display:flex; align-items:center; justify-content:center;
+    width:210px; height:180px; margin:2px auto}
+  .akhil-photo{max-width:200px; max-height:180px; border-radius:14px;
+    box-shadow:0 14px 34px rgba(0,0,0,.55); border:3px solid #ffd34d;
+    transform-origin:center bottom;
+    animation:akhilIn .9s cubic-bezier(.2,1.45,.35,1) both, akhilWobble 1.15s ease-in-out 1s infinite}
+  .akhil-fallback{display:none; font-size:74px; transform-origin:center bottom;
+    animation:akhilIn .9s cubic-bezier(.2,1.45,.35,1) both, akhilWobble 1.15s ease-in-out 1s infinite}
+  @keyframes akhilIn{
+    0%{transform:translateY(-250px) rotate(-22deg) scale(.22); opacity:0}
+    55%{transform:translateY(16px) rotate(7deg) scale(1.13); opacity:1}
+    72%{transform:translateY(-9px) rotate(-4deg) scale(.95)}
+    88%{transform:translateY(5px) rotate(2deg) scale(1.03)}
+    100%{transform:translateY(0) rotate(0) scale(1); opacity:1}}
+  @keyframes akhilWobble{
+    0%,100%{transform:rotate(-3.5deg) translateY(0) scale(1)}
+    25%{transform:rotate(0deg) translateY(-8px) scale(1.035)}
+    50%{transform:rotate(3.5deg) translateY(0) scale(1)}
+    75%{transform:rotate(0deg) translateY(-8px) scale(1.035)}}
+  .spark{position:absolute; font-size:26px; pointer-events:none; opacity:0; z-index:2;
+    animation:twinkle 1.4s ease-in-out infinite}
+  .spark.s1{top:0; left:14px; animation-delay:.1s}
+  .spark.s2{top:14px; right:10px; animation-delay:.5s}
+  .spark.s3{bottom:6px; left:2px; animation-delay:.85s}
+  .spark.s4{bottom:16px; right:4px; animation-delay:1.15s}
+  @keyframes twinkle{0%,100%{opacity:0; transform:scale(.3) rotate(0)}
+    50%{opacity:1; transform:scale(1.15) rotate(20deg)}}
   .winname{font-size:34px; font-weight:900; margin:6px 0}
   .bubble{background:#fff; color:#0f172a; padding:10px 16px; border-radius:16px;
     font-weight:650; position:relative; max-width:320px; margin-bottom:8px}
@@ -208,9 +230,12 @@
         <canvas id="confetti"></canvas>
         <div class="podium">
           <div class="bubble" id="winBubble">🚲 Le lo apni cycle!</div>
-          <div style="display:flex; align-items:flex-end; gap:6px">
-            <div class="akhil">🧑‍💼</div>
-            <div class="gift">🚲</div>
+          <div class="akhil-stage">
+            <div class="spark s1">✨</div><div class="spark s2">⭐</div>
+            <div class="spark s3">💫</div><div class="spark s4">✨</div>
+            <img id="akhilImg" class="akhil-photo" src="akhilesh.png" alt="Akhilesh Yadav"
+                 onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='akhilesh.jpg';}else{this.style.display='none';document.getElementById('akhilFallback').style.display='block';}">
+            <div id="akhilFallback" class="akhil-fallback">🧑‍💼🚲</div>
           </div>
           <div class="small muted" style="margin-top:6px">Akhilesh Yadav presents the cycle to</div>
           <div class="winname" id="winName">—</div>
@@ -733,12 +758,30 @@ function renderHud(){
 /* ============================================================
    WINNER + CONFETTI
    ============================================================ */
+const WINLINES = [
+  '🚲 {n}, le lo apni nayi cycle!',
+  '📸 Photo khinch lo — {n} jeet gaya!',
+  '🚲 Vikas ki cycle, sirf {n} ke liye!',
+  '🚲 {n} ji, pedal maarte raho!',
+  '🚲 Helmet pehen ke chalana, {n}!',
+  '🏆 {n} hai is gali ka asli champion!'
+];
+let winLineTimer=null;
 function showWinner(winner, order){
   G.phase='finished';
   show($('winScreen'));
+  // restart the photo animation each time
+  const ai=$('akhilImg'), af=$('akhilFallback');
+  if(ai){ ai.style.display=''; af.style.display='none'; ai.dataset.tried=''; ai.src='akhilesh.png?'+Date.now(); }
   $('winName').textContent = winner.name;
   $('winName').style.color = winner.color;
-  $('winBubble').textContent = '🚲 ' + winner.name + ', le lo apni nayi cycle!';
+  // cycle through funny one-liners
+  let li=0;
+  const setLine=()=>{ $('winBubble').textContent = WINLINES[li%WINLINES.length].replace('{n}', winner.name); li++; };
+  setLine();
+  clearInterval(winLineTimer);
+  winLineTimer = setInterval(setLine, 1900);
+  boing();
   const rl=$('rankList'); rl.innerHTML='';
   order.forEach((o,i)=>{
     const medal=['🥇','🥈','🥉'][i]||(i+1)+'.';
@@ -776,14 +819,14 @@ function startConfetti(){
    RESET / NAV
    ============================================================ */
 function backToLobby(){
-  cancelAnimationFrame(G.raf); cancelAnimationFrame(confettiRaf);
+  cancelAnimationFrame(G.raf); cancelAnimationFrame(confettiRaf); clearInterval(winLineTimer);
   G.phase='lobby'; G.bikes=[]; finCounter=0; finishOrder=[];
   hide($('winScreen'));
   enterLobby(); renderLobby();
 }
 function rematch(){
   if(isHost){
-    finCounter=0; finishOrder=[]; cancelAnimationFrame(confettiRaf); hide($('winScreen'));
+    finCounter=0; finishOrder=[]; cancelAnimationFrame(confettiRaf); clearInterval(winLineTimer); hide($('winScreen'));
     hostStart();
   } else {
     // ask host (host's "again" drives everyone via start). Just wait.
@@ -803,6 +846,19 @@ function beep(freq,dur){
     g.gain.exponentialRampToValueAtTime(.18,actx.currentTime+.01);
     g.gain.exponentialRampToValueAtTime(.0001,actx.currentTime+dur);
     o.start(); o.stop(actx.currentTime+dur+.02);
+  }catch(e){}
+}
+function boing(){ // comedic pitch-drop "boing" for the winner
+  try{ actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+    const o=actx.createOscillator(), g=actx.createGain();
+    o.type='sine'; o.connect(g); g.connect(actx.destination);
+    const t=actx.currentTime;
+    o.frequency.setValueAtTime(180,t);
+    o.frequency.exponentialRampToValueAtTime(620,t+.12);
+    o.frequency.exponentialRampToValueAtTime(160,t+.34);
+    g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.22,t+.03);
+    g.gain.exponentialRampToValueAtTime(.0001,t+.45);
+    o.start(t); o.stop(t+.5);
   }catch(e){}
 }
 
