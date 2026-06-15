@@ -1,30 +1,39 @@
-# 🚴 Cycle Race — multiplayer
+# 🏁 Cycle Kart Race — multiplayer
 
-A clean, share-a-link bicycle racing game for **3–6 friends across different phones &
-laptops**. First rider to finish the laps wins — and **Akhilesh Yadav gifts the cycle** 🚲
-with confetti.
+A SmashKarts-style arcade **drift racer** for friends across phones & laptops. Throttle,
+steer, **drift to charge a boost**, hit boost pads, and finish the laps first — the winner
+gets the golden cycle from **Akhilesh Yadav** 🚲 (with confetti and a goofy animation).
 
 **No accounts. No server to run.** Players connect peer-to-peer over WebRTC (PeerJS free
-broker + free STUN/TURN), so it works straight off GitHub Pages.
+broker + free STUN/TURN), so it runs straight off GitHub Pages.
 
-## How to play
+## Play
 
-1. One person opens the game and taps **🏁 Create Game** → gets a 5-letter room code and a
-   shareable link.
+1. One person taps **🏁 Create Game** → gets a 5-letter room code + shareable link.
 2. Friends open the link on their phones/laptops, type a name, and **Join**.
-3. The host picks the number of laps and taps **🚦 Start Race**.
-4. **Controls:** `◀ ▶` on-screen buttons (mobile) or `←  →` / `A  D` keys (desktop).
-   Bikes auto-pedal — you just steer. Stay on the asphalt; grass slows you down.
-5. First across the line after all the laps wins the cycle.
+   Solo? The host can **🤖 Add bot** to fill the grid.
+3. Host picks laps (2 / 3 / 5) and taps **🚦 Start Race**.
 
-> ⚠️ Keep the **host's** tab open during the race — that device runs the game.
+### Controls
+- **Desktop:** `↑`/W gas · `↓`/S brake · `← →`/A D steer · **Space**/Shift drift.
+- **Mobile:** auto-gas · `◀ ▶` steer · big **DRIFT** button.
+- **Drift → Boost:** hold drift through a corner to build the boost meter, release to fire
+  a speed burst. Yellow chevrons on the track are **boost pads**.
+- Stay on the asphalt — grass slows you hard.
+
+The camera follows your kart; a **minimap** (top-right) shows everyone. First across the
+line after all laps wins.
+
+> ⚠️ Keep the **host's** tab open during the race — that device runs the simulation.
 > On rare very strict networks WebRTC can fail to connect; usually it just works.
 
-## Run locally
+## The winner's photo (optional)
+The win screen shows an image at `cycle-race/akhilesh.png` (or `.jpg`); if it's missing it
+falls back to an emoji. Drop a photo in with that name to use it.
 
+## Run locally
 ```bash
 npx http-server cycle-race -p 4178 -c-1
 # open http://localhost:4178
 ```
-
-It's a single `index.html` — no build step, nothing to install.
+Single `index.html`, no build step.
