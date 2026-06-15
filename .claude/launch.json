@@ -6,6 +6,12 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["http-server", "www", "-p", "8717", "-c-1"],
       "port": 8717
+    },
+    {
+      "name": "cycle-race",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["-y", "http-server", "cycle-race", "-p", "4178", "-c-1"],
+      "port": 4178
     }
   ]
 }
