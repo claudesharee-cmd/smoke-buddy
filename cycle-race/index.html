@@ -190,8 +190,9 @@
           <div class="bubble" id="winBubble">🚲 Le lo apni cycle!</div>
           <div class="akhil-stage">
             <div class="spark s1">✨</div><div class="spark s2">⭐</div><div class="spark s3">💫</div><div class="spark s4">✨</div>
-            <img id="akhilImg" class="akhil-photo" src="akhilesh.png" alt="Akhilesh Yadav"
-                 onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='akhilesh.jpg';}else{this.style.display='none';document.getElementById('akhilFallback').style.display='block';}">
+            <img id="akhilImg" class="akhil-photo" src="akhilesh.webp" alt="Akhilesh Yadav"
+                 data-srcs="akhilesh.webp,akhilesh.png,akhilesh.jpg" data-step="0"
+                 onerror="(function(im){var l=im.dataset.srcs.split(',');var n=++im.dataset.step;if(n<l.length){im.src=l[n];}else{im.style.display='none';document.getElementById('akhilFallback').style.display='block';}})(this)">
             <div id="akhilFallback" class="akhil-fallback">🧑‍💼🚲</div>
           </div>
           <div class="small muted" style="margin-top:6px">Akhilesh Yadav presents the cycle to</div>
@@ -760,7 +761,7 @@ let winLineTimer=null;
 function showWinner(winner,order){
   G.phase='finished'; show($('winScreen'));
   const ai=$('akhilImg'),af=$('akhilFallback');
-  if(ai){ai.style.display='';af.style.display='none';ai.dataset.tried='';ai.src='akhilesh.png?'+Date.now();}
+  if(ai){ai.style.display='';af.style.display='none';ai.dataset.step='0';ai.src='akhilesh.webp?'+Date.now();}
   $('winName').textContent=winner.name; $('winName').style.color=winner.color;
   let li=0; const setLine=()=>{$('winBubble').textContent=WINLINES[li%WINLINES.length].replace('{n}',winner.name);li++;};
   setLine(); clearInterval(winLineTimer); winLineTimer=setInterval(setLine,1900); boing();
